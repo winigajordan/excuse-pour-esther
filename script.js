@@ -74,6 +74,26 @@ function parseContent(raw) {
 const $ = (id) => document.getElementById(id);
 
 // ---------- sons (synthétisés, aucun fichier) ----------
+// iPhone : le son Web Audio est coupé par le bouton silencieux et peut être suspendu.
+// Une piste <audio> silencieuse en boucle (lancée sur un geste) force la session audio en
+// mode "lecture" : les sons restent alors audibles, même avec le mode silencieux.
+let silentAudio = null;
+function keepAudioSession() {
+  if (silentAudio) return;
+  const rate = 8000, n = rate / 5;                       // 0,2 s de silence
+  const buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+  const w = (o, s) => [...s].forEach((ch, i) => v.setUint8(o + i, ch.charCodeAt(0)));
+  w(0, "RIFF"); v.setUint32(4, 36 + n, true); w(8, "WAVEfmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+  w(36, "data"); v.setUint32(40, n, true);
+  new Uint8Array(buf, 44).fill(128);                     // 128 = silence en 8 bits
+  silentAudio = new Audio(URL.createObjectURL(new Blob([buf], { type: "audio/wav" })));
+  silentAudio.loop = true;
+  silentAudio.setAttribute("playsinline", "");
+  silentAudio.play().catch(() => { silentAudio = null; });
+}
+
 const sfx = (() => {
   let ctx = null, muted = false, ambientTimer = null, ambientBus = null;
   const ac = () => {
@@ -162,6 +182,7 @@ const sfx = (() => {
         s.buffer = c.createBuffer(1, 1, 22050);
         s.connect(c.destination);
         s.start(0);
+        keepAudioSession();
         return c.state === "running";
       } catch (e) { return false; }
     },
