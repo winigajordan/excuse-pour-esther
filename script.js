@@ -154,7 +154,17 @@ const sfx = (() => {
       if (ambientBus) { ambientBus.gain.value = 0; ambientBus = null; }
     },
     toggle: () => { muted = !muted; if (muted) sfx.stopAmbient(); return muted; },
-    unlock: () => { try { ac(); } catch (e) {} },
+    // à appeler dans un vrai geste utilisateur : réveille le contexte audio (iOS compris)
+    unlock: () => {
+      try {
+        const c = ac();
+        const s = c.createBufferSource();
+        s.buffer = c.createBuffer(1, 1, 22050);
+        s.connect(c.destination);
+        s.start(0);
+        return c.state === "running";
+      } catch (e) { return false; }
+    },
     get muted() { return muted; },
   };
 })();
@@ -562,7 +572,15 @@ document.addEventListener("keydown", (e) => {
   else if (e.key === "Enter") (stage === 3 ? check : validate)();
 });
 
-document.addEventListener("pointerdown", sfx.unlock, { once: true });
+// Les navigateurs bloquent le son tant qu'il n'y a pas eu un geste (clic, toucher, touche).
+// On retente à chaque geste jusqu'à ce que le contexte audio tourne vraiment
+// (sur iPhone, "pointerdown" seul ne suffit pas : il faut aussi touchend / click).
+["pointerdown", "touchend", "click", "keydown"].forEach((t) => {
+  const onGesture = () => {
+    if (sfx.unlock()) ["pointerdown", "touchend", "click", "keydown"].forEach((x) => document.removeEventListener(x, onGesture, true));
+  };
+  document.addEventListener(t, onGesture, true);
+});
 
 showStage();
 
