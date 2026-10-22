@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#081633">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Pour Esther</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="glow g1"></div><div class="glow g2"></div>
+    <div class="bg-stars" id="bgStars"></div>
+    <div class="orbs" id="orbs"></div>
+    <span class="shoot s1"></span><span class="shoot s2"></span><span class="shoot s3"></span>
+  </div>
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+
+  <main class="scene" id="vaultScene">
+    <div class="safe" id="safe">
+      <div class="cabinet"></div>
+      <span class="hinge h1"></span><span class="hinge h2"></span>
+      <div class="inside"><span>❤️</span></div>
+
+      <div class="door" id="door">
+        <span class="bolt b1"></span><span class="bolt b2"></span>
+        <span class="bolt b3"></span><span class="bolt b4"></span>
+        <div class="led-wrap"><div class="led" id="led"></div></div>
+        <button class="hint-btn" id="hint" type="button" aria-label="Indice">💡 Indice</button>
+
+        <div class="dial" id="dial">
+          <div class="knurl"></div>
+          <div class="ring" id="ring"></div>
+          <div class="nuts" id="nuts"></div>
+          <div class="lcd">
+            <span class="lcd-label" id="lcdLabel">Jour</span>
+            <button type="button" class="arrow" id="up" aria-label="Plus">▲</button>
+            <div class="num" id="num">01</div>
+            <button type="button" class="arrow" id="down" aria-label="Moins">▼</button>
+            <span class="lcd-sub" id="sub">&nbsp;</span>
+            <div class="dots" id="dots"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="validate" id="validate" type="button">Valider</button>
+          <button class="back" id="back" type="button" hidden>↩ Revenir en arrière</button>
+        </div>
+
+        <button class="handle" id="handle" type="button" aria-label="Ouvrir le coffre" disabled>
+          <span class="spoke"></span><span class="spoke"></span><span class="spoke"></span>
+          <span class="hub">♥</span>
+        </button>
+
+        <p class="msg" id="msg">&nbsp;</p>
+      </div>
+    </div>
+  </main>
+
+  <article class="letter-scene" id="letterScene" hidden>
+    <div class="story">
+      <div class="progress" id="progress"></div>
+      <div class="page" id="page"></div>
+      <div class="story-nav">
+        <button class="nav ghost" id="prevPage" type="button" aria-label="Précédent">‹</button>
+        <button class="nav main" id="nextPage" type="button">Continuer</button>
+      </div>
+    </div>
+  </article>
+
+  <script src="content.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
